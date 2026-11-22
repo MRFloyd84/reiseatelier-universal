@@ -48,6 +48,10 @@ Unter Einstellungen → „Route importieren & exportieren“:
 - **Tabelle (.csv)** aus Excel/Numbers mit Kopfzeile, z. B. `Ort;Land;Ankunft;Abreise;Notiz` (auch Englisch: `Place;Country;Arrival;Departure;Notes`).
 - **Text einfügen**: eine Station pro Zeile mit Datum, z. B. `12.05.2027 Lissabon`, `14.05.–17.05.2027 Porto, Portugal`, `So 18.05. 08:00–18:00 Vigo`, `18. Mai 2027 Rom`. Jahre ohne Angabe werden ergänzt, „ab 18:00“ wird als Abreise erkannt, „Seetag“ als Reisetag.
 
+**Buchungsbestätigungen:** Den ganzen Text einer Bestätigungsmail einfügen. Erkannt werden Hotels (Name, Check-in/Check-out bzw. Anreise/Abreise mit Uhrzeit, Adresse und Telefon – landen als Unterkunft samt Notfallangaben), Flüge (Flughafencodes wie „(FRA) – (HND)“, Flugnummer, Ankunftszeit; der Rückflug nach Hause ist in der Vorschau abgewählt) und Kreuzfahrt-Verläufe als Tabelle. Zeilen wie Buchungsdatum oder Zahlungsfristen werden übersprungen.
+
+**Teilen an Reiseatelier (Android):** Ist die App installiert, erscheint sie im Teilen-Menü. In der Mail-App oder im Browser den Reiseverlauf markieren → Teilen → „Reiseatelier“, die Import-Vorschau öffnet sich direkt. Auch .ics-Dateien lassen sich so teilen. Nur ein geteilter Link reicht nicht – Webseiten kann die App nicht selbst lesen. Auf iPhone und iPad erlaubt Apple das Teilen an Web-Apps nicht, dort Text kopieren und unter Einstellungen einfügen.
+
 Orte und Länder erkennt die App über die eingebaute Ortsliste (auch deutsche Namen wie München, Rom, Lissabon). Vor dem Übernehmen gibt es eine Vorschau, in der sich Name, Land und Daten ändern lassen. **Export:** „Route als .ics exportieren“ schreibt alle Stationen und Ausflüge mit Uhrzeit in eine Kalenderdatei.
 
 ## 6. Einreise (Staatsangehörigkeit Deutschland)
