@@ -393,3 +393,16 @@ body:not(.is-cruise) .cruise-only{display:none}
 .en-names input{width:9.5em}
 @media (max-width:700px){.trip-switch{margin-left:auto;max-width:60vw;font-size:12px;padding:5px 10px}.trips-list li{flex-direction:column;align-items:flex-start}}
 @media print{.trip-switch{display:none}}
+.import-dialog{width:min(900px,96vw)}
+.imp-table{display:grid;gap:6px;margin:14px 0;max-height:55vh;overflow:auto}
+.imp-row{display:grid;grid-template-columns:28px minmax(0,1.4fr) minmax(0,1.1fr) 140px 140px 22px;gap:6px;align-items:center}
+.imp-row.off{opacity:.5}
+.imp-row input,.imp-row select{padding:7px 8px;font-size:12px}
+.imp-use input{width:18px;height:18px}
+.imp-pos{color:var(--teal);font-weight:700;text-align:center}
+.sync-android{margin:10px 0 14px;font-size:13px}
+.sync-android summary{cursor:pointer;font-weight:700;color:var(--teal);display:block;padding:0}
+.sync-android ol{padding-left:20px;line-height:1.55;color:var(--muted)}
+@media(max-width:700px){.imp-row{grid-template-columns:24px minmax(0,1fr) minmax(0,1fr);}.imp-row input[type=date]{grid-column:span 1}.imp-pos{display:none}}
+.en-add summary{display:block;padding:0}
+.em-aa{margin-top:12px}.em-aa .text-btn{padding:2px 6px}.em-more summary{display:block;cursor:pointer;font-size:12px;color:var(--teal);padding:4px 0}

@@ -38,7 +38,19 @@ Jede Reise hat ihre eigene Datei, benannt nach dem Reisenamen (z. B. `reiseateli
 - Datei einer **Reise, die es auf dem Gerät noch nicht gibt**? Die App legt sie als neue Reise an. So kommt eine Reise auch auf ein neues Gerät.
 - **Dateien aus dem ursprünglichen Reiseatelier** (ohne Reise-Kennung) werden in die gerade geöffnete Reise übernommen. Dafür vorher eine leere Reise anlegen.
 
-## 5. Einreise (Staatsangehörigkeit Deutschland)
+**Android mit Google Drive:** „Abgleich-Datei speichern“ öffnet das Teilen-Menü → *In Drive speichern* → Ordner wählen. Zum Laden im Dateiauswahl-Menü links *Drive* wählen. Google Drive ersetzt keine Dateien, sondern legt bei gleichem Namen eine weitere an. Entweder die alte Datei in der Drive-App löschen oder beim Laden einfach alle Dateien markieren – die App führt mehrere Dateien nacheinander zusammen (älteste zuerst). Lässt Android das Teilen als `.json` nicht zu, speichert die App die Datei als `.txt`; beide werden gelesen. In gemischten Gruppen (iPhone und Android) nutzen am besten alle Google Drive – auf dem iPhone erscheint es in der Dateien-App, dort funktioniert „Ersetzen“.
+
+## 5. Route importieren und exportieren
+
+Unter Einstellungen → „Route importieren & exportieren“:
+
+- **Kalenderdatei (.ics)** aus Google-, Apple- oder Outlook-Kalender: jeder Termin wird eine Station (Ort aus „Ort“/Titel, Koordinaten aus GEO).
+- **Tabelle (.csv)** aus Excel/Numbers mit Kopfzeile, z. B. `Ort;Land;Ankunft;Abreise;Notiz` (auch Englisch: `Place;Country;Arrival;Departure;Notes`).
+- **Text einfügen**: eine Station pro Zeile mit Datum, z. B. `12.05.2027 Lissabon`, `14.05.–17.05.2027 Porto, Portugal`, `So 18.05. 08:00–18:00 Vigo`, `18. Mai 2027 Rom`. Jahre ohne Angabe werden ergänzt, „ab 18:00“ wird als Abreise erkannt, „Seetag“ als Reisetag.
+
+Orte und Länder erkennt die App über die eingebaute Ortsliste (auch deutsche Namen wie München, Rom, Lissabon). Vor dem Übernehmen gibt es eine Vorschau, in der sich Name, Land und Daten ändern lassen. **Export:** „Route als .ics exportieren“ schreibt alle Stationen und Ausflüge mit Uhrzeit in eine Kalenderdatei.
+
+## 6. Einreise (Staatsangehörigkeit Deutschland)
 
 Der Tab „Einreise“ erzeugt die Checkliste aus der Route:
 
@@ -50,22 +62,27 @@ Der Tab „Einreise“ erzeugt die Checkliste aus der Route:
 
 Bis zu 6 Reisende können getrennt abhaken. Ist etwas fällig, erscheint ein Hinweis auf der Startseite.
 
-## 6. Notfall
+## 7. Notfall
 
 - **Örtliche Notrufnummern für alle 249 Länder und Gebiete** – Polizei, Rettung, Feuerwehr bzw. allgemeiner Notruf, mit Hinweisen (z. B. Touristenpolizei). Gleiche Nummern werden zusammengefasst. Wo die Quellen uneinheitlich sind, steht ein Warnhinweis. Stand 22.11.2026.
 - **Länder der Route** automatisch, dazu „Alle Länder nachschlagen“ für jedes Land.
-- **Deutschland:** Auswärtiges Amt (24 h), Sperr-Notruf, Giftnotruf, Links zu Reise- und Sicherheitshinweisen und ELEFAND. Deutsche Vertretungen sind für 26 Länder hinterlegt (Stand 18.11.2026), für alle anderen verweist die App auf die Länderseiten des Auswärtigen Amts.
+- **Deutschland:** Auswärtiges Amt (24 h), Sperr-Notruf, Giftnotruf, Links zu Reise- und Sicherheitshinweisen und ELEFAND.
+- **Deutsche Vertretungen live:** Beim Öffnen des Notfall-Tabs ruft die App die Vertretungen über die OpenData-Schnittstelle des Auswärtigen Amts ab (höchstens alle 3 Tage, oder per „↻ Aktualisieren“) und speichert sie für offline. Unter „Wichtige Nummern aus Deutschland“ steht, ob und wann der Abruf geklappt hat. Klappt er nicht (offline oder vom Browser blockiert), gelten die hinterlegten Vertretungen für 26 Länder (Stand 18.11.2026) bzw. der Link zu den Länderseiten des Auswärtigen Amts.
 - **Eure Angaben:** Versicherung, Veranstalter/Reederei, Kontaktpersonen, Arzt, Medizinisches.
 - **Taxi-Karte** in der Landessprache (mit Unterkunft und Adresse bzw. bei Kreuzfahrten mit Schiff, Hafen und „Alle an Bord“).
 - **Dokumentfotos** (Pass, Ausweis, Versicherungskarte): nur auf dem Gerät, für alle Reisen.
 
 Alles funktioniert offline. Nummern ändern sich selten, aber kurz vor der Abreise lohnt ein Blick in die App „Sicher Reisen“ des Auswärtigen Amts.
 
-## 7. Unterwegs ohne Internet
+## 8. Sprache
+
+Deutsch oder Englisch, unter Einstellungen → „Sprache / Language“. Die Einstellung gilt pro Gerät; beim ersten Start richtet sie sich nach der Sprache des Browsers. Eigene Einträge (Notizen, Tagebuch, Ortsnamen) werden nicht übersetzt.
+
+## 9. Unterwegs ohne Internet
 
 Route, Planung, Einreise, Notfall, Tagebuch, Fotos, Ortssuche (eingebaute Liste mit rund 49.000 Orten) und eine Weltkarte mit Länderumrissen funktionieren offline. Online kommen die Detailkarte (OpenStreetMap), die genauere Ortssuche und Länder- und Klimadaten dazu.
 
-## 8. Aktualisieren
+## 10. Aktualisieren
 
 Neue Dateien über die alten hochladen. Die Reisedaten bleiben auf den Geräten. Beim nächsten Öffnen mit Internet lädt die App die neue Version.
 

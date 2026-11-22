@@ -53,12 +53,19 @@ function localCol(kv,path,order){
 }
 
 /* ---------- Datei speichern ohne Claude: Teilen-Menü (iPhone/iPad: „In Dateien sichern“) oder normaler Download ---------- */
-async function saveFile(filename,text){const blob=new Blob([text],{type:'application/json'});
-  try{const file=new File([blob],filename,{type:'application/json'});if(navigator.canShare&&navigator.canShare({files:[file]})&&/iPhone|iPad|Macintosh/.test(navigator.userAgent)&&'ontouchend' in document){await navigator.share({files:[file],title:filename});return true;}}
-  catch(e){if(e&&e.name==='AbortError')return false;
-    if(e&&e.name==='NotAllowedError'&&typeof confirmAction==='function'){/* Vorbereitung hat zu lange gedauert: erneut antippen lassen */
-      const go=await confirmAction('Datei ist bereit',`„${filename}“ (${Math.max(1,Math.round(text.length/1024))} KB) kann jetzt gesichert werden. Im Teilen-Menü „In Dateien sichern“ wählen.`,[{label:'Abbrechen',value:false},{label:'Jetzt sichern',value:true,className:'primary'}]);
-      if(!go)return false;try{await navigator.share({files:[new File([blob],filename,{type:'application/json'})],title:filename});return true;}catch(e2){if(e2&&e2.name==='AbortError')return false;}}}
+/* Teilen-Menü bevorzugen, damit die Datei direkt in iCloud Drive, Google Drive, OneDrive usw. landet.
+   iPhone/iPad/Mac: „In Dateien sichern“. Android: „In Drive speichern“ – Chrome auf Android teilt nur bestimmte
+   Dateitypen, daher notfalls als .txt (die App liest beide). Sonst normaler Download. */
+const IS_ANDROID=/Android/i.test(navigator.userAgent),IS_APPLE_TOUCH=/iPhone|iPad|Macintosh/.test(navigator.userAgent)&&'ontouchend' in document;
+async function saveFile(filename,text,type='application/json'){const blob=new Blob([text],{type});
+  const candidates=[[filename,type]];if(IS_ANDROID&&/\.json$/.test(filename))candidates.push([filename.replace(/\.json$/,'.txt'),'text/plain']);
+  if((IS_APPLE_TOUCH||IS_ANDROID)&&navigator.canShare){for(const [name,t] of candidates){let file;try{file=new File([text],name,{type:t});}catch{continue;}if(!navigator.canShare({files:[file]}))continue;
+    try{await navigator.share({files:[file],title:name});return true;}
+    catch(e){if(e&&e.name==='AbortError')return false;
+      if(e&&e.name==='NotAllowedError'&&typeof confirmAction==='function'){/* Vorbereitung hat zu lange gedauert: erneut antippen lassen */
+        const go=await confirmAction('Datei ist bereit',`„${name}“ (${Math.max(1,Math.round(text.length/1024))} KB) kann jetzt gesichert werden. Im Teilen-Menü ${IS_ANDROID?'„In Drive speichern“ (oder eine andere Cloud-App)':'„In Dateien sichern“'} wählen.`,[{label:'Abbrechen',value:false},{label:'Jetzt sichern',value:true,className:'primary'}]);
+        if(!go)return false;try{await navigator.share({files:[new File([text],name,{type:t})],title:name});return true;}catch(e2){if(e2&&e2.name==='AbortError')return false;}}
+      break;}}}
   const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=filename;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);return true;}
 /* ---------- Start: Reiseverzeichnis laden, geöffnete Reise wählen ---------- */
 const newId=()=>'t'+Date.now().toString(36)+rand();
@@ -157,7 +164,7 @@ async backups(){const s=await base.collection('backups').orderBy('created','desc
 async backupText(id){const s=await base.collection('backups').doc(id).get();if(!s.exists)throw Error('Sicherung nicht gefunden.');const b=s.data();return readParts('bparts',b.key,b.parts);},
 async exportText(){await this.flush();const cur=await current();return JSON.stringify({...cur.state,exportedAt:stamp()},null,2);},
 canDownload(){return true;},
-async download(filename,text){if(!dl)return saveFile(filename,text);try{await dl.save({filename,data:text});return true;}catch(e){if(e&&e.code==='declined')return false;throw Error('Datei konnte nicht gespeichert werden ('+(e&&e.code||'Fehler')+').');}},
+async download(filename,text,type){if(!dl)return saveFile(filename,text,type);try{await dl.save({filename,data:text});return true;}catch(e){if(e&&e.code==='declined')return false;throw Error('Datei konnte nicht gespeichert werden ('+(e&&e.code||'Fehler')+').');}},
 getDraft(){try{return JSON.parse(localStorage.getItem(DRAFT())||'null');}catch{return null;}},
 async refresh(){if(pending||blocked)return null;if(mode!=='device'&&remoteRev<=revision)return null;const r=await current();if(r.revision===revision)return null;revision=r.revision;meta=r.meta||null;return r.state;},
 };
@@ -179,6 +186,7 @@ function syncStatus(){try{return JSON.parse(localStorage.getItem(SYNC_STATUS())|
 function setSyncStatus(k){try{const s=syncStatus();s[k]=stamp();localStorage.setItem(SYNC_STATUS(),JSON.stringify(s));}catch{}root.dispatchEvent(new CustomEvent('travel-sync-status'));}
 const Sync={
   status:syncStatus,
+  markLoaded(){setSyncStatus('loaded');},
   fileName(){return 'reiseatelier-'+slug()+'.json';},
   /* Zu welcher Reise gehört die Datei? same = diese Reise (oder alte Datei ohne Kennung), known = andere vorhandene Reise, new = unbekannt. */
   async whose(file){await init();if(!file||file.type!=='reiseatelier-abgleich')throw Error('Das ist keine Abgleich-Datei des Reiseateliers.');

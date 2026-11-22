@@ -31,15 +31,30 @@ async function load(file){if(busy)return;busy=true;try{
   const p=await TravelStore.sync.plan(data),n=p.n;
   if(!p.anything){TravelStore.sync.status();toast('Alles schon auf dem gleichen Stand – nichts zu übernehmen.');localMark();return;}
   const pl=(k,one,many)=>k===1?one:many;const lines=[n.tripNew&&`${n.tripNew} ${pl(n.tripNew,'neue Station','neue Stationen')}`,n.tripUpd&&`${n.tripUpd} ${pl(n.tripUpd,'Änderung','Änderungen')} an Route oder Einstellungen`,n.tripDel&&`${n.tripDel} ${pl(n.tripDel,'gelöschte Station','gelöschte Stationen')}`,n.diaryNew&&`${n.diaryNew} ${pl(n.diaryNew,'neuer Tagebucheintrag','neue Tagebucheinträge')}`,n.diaryUpd&&`${n.diaryUpd} ${pl(n.diaryUpd,'geänderter Tagebucheintrag','geänderte Tagebucheinträge')}`,n.diaryDel&&`${n.diaryDel} ${pl(n.diaryDel,'gelöschter Tagebucheintrag','gelöschte Tagebucheinträge')}`].filter(Boolean);
-  const ok=await confirmAction('Abgleich übernehmen?',`Datei vom ${when(p.exportedAt)}. Übernommen wird: ${lines.join(', ')}. Bei Änderungen am selben Eintrag gewinnt jeweils die neuere. Vorher wird automatisch eine Sicherheitskopie angelegt.`,[{label:'Abbrechen',value:false},{label:'Abgleichen',value:true,className:'primary'}]);
+  const st=TravelStore.sync.status(),older=st.saved&&p.exportedAt&&Date.parse(p.exportedAt)<Date.parse(st.saved);
+  const ok=await confirmAction('Abgleich übernehmen?',`Datei vom ${when(p.exportedAt)}.${older?' Hinweis: Sie ist älter als dein letztes Speichern auf diesem Gerät – liegt im Ordner vielleicht eine neuere Datei? Laden schadet trotzdem nicht.':''} Übernommen wird: ${lines.join(', ')}. Bei Änderungen am selben Eintrag gewinnt jeweils die neuere. Vorher wird automatisch eine Sicherheitskopie angelegt.`,[{label:'Abbrechen',value:false},{label:'Abgleichen',value:true,className:'primary'}]);
   if(!ok)return;toast('Abgleich läuft …');const r=await TravelStore.sync.apply(p);
   try{state=TravelCore.validateState(r.state);render_();}catch{}
   window.TravelDiary?.reload?.();toast('Abgleich abgeschlossen.'+(r.backup?' Vorheriger Stand gesichert.':''));
 }catch(e){toast('Abgleich fehlgeschlagen: '+e.message);}finally{busy=false;render();}}
-function localMark(){try{const k='reiseatelier.web.syncstatus.v1',s=JSON.parse(localStorage.getItem(k)||'{}');s.loaded=new Date().toISOString();localStorage.setItem(k,JSON.stringify(s));}catch{}}
+function localMark(){try{TravelStore.sync.markLoaded();}catch{}}
 function render_(){try{window.__renderTrip?.();}catch{}}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-sync]');if(!b)return;if(b.dataset.sync==='save')save();if(b.dataset.sync==='load')q('#sync-file').click();});
-document.addEventListener('change',e=>{if(e.target.id!=='sync-file')return;const f=e.target.files[0];e.target.value='';if(f)load(f);});
+/* Mehrere Dateien auf einmal (z. B. wenn Google Drive beim Speichern Kopien angelegt hat): nacheinander zusammenführen, älteste zuerst. */
+async function loadMany(files){if(busy)return;busy=true;try{
+  const items=[];for(const f of files){if(f.size>300*1024*1024)continue;try{const d=JSON.parse(await f.text());if(d&&d.type==='reiseatelier-abgleich')items.push(d);}catch{}}
+  const mine=[];let other=0;for(const d of items){const w=await TravelStore.sync.whose(d);if(w.kind==='same')mine.push(d);else other++;}
+  if(!mine.length){toast(other?'Keine der Dateien gehört zur geöffneten Reise. Bitte zuerst die passende Reise öffnen.':'Keine gültige Abgleich-Datei dabei.');return;}
+  mine.sort((a,b)=>String(a.exportedAt).localeCompare(String(b.exportedAt)));
+  const ok=await confirmAction('Dateien zusammenführen?',`${mine.length} Abgleich-Dateien vom ${when(mine[0].exportedAt)} bis ${when(mine.at(-1).exportedAt)} werden nacheinander übernommen.${other?` ${other} Datei(en) anderer Reisen werden übersprungen.`:''} Bei Änderungen am selben Eintrag gewinnt die neuere. Vorher wird eine Sicherheitskopie angelegt.`,[{label:'Abbrechen',value:false},{label:'Zusammenführen',value:true,className:'primary'}]);
+  if(!ok)return;toast('Abgleich läuft …');let r=null;for(const d of mine){const p=await TravelStore.sync.plan(d);if(p.anything)r=await TravelStore.sync.apply(p);}
+  localMark();if(r){try{state=TravelCore.validateState(r.state);render_();}catch{}window.TravelDiary?.reload?.();}toast(r?'Abgleich abgeschlossen.':'Alles schon auf dem gleichen Stand.');
+}catch(e){toast('Abgleich fehlgeschlagen: '+e.message);}finally{busy=false;render();}}
+document.addEventListener('change',e=>{if(e.target.id!=='sync-file')return;const fs=[...e.target.files];e.target.value='';if(fs.length===1)load(fs[0]);else if(fs.length>1)loadMany(fs);});
+/* App installieren (Android, Chrome/Edge am Computer): Browser-Angebot abfangen und als Knopf anbieten. */
+let installEvt=null;addEventListener('beforeinstallprompt',e=>{e.preventDefault();installEvt=e;document.querySelectorAll('[data-install]').forEach(b=>b.hidden=false);});
+addEventListener('appinstalled',()=>{installEvt=null;document.querySelectorAll('[data-install]').forEach(b=>b.hidden=true);toast('App installiert. Ab jetzt über das Symbol starten.');});
+document.addEventListener('click',async e=>{if(!e.target.closest?.('[data-install]')||!installEvt)return;installEvt.prompt();try{await installEvt.userChoice;}catch{}installEvt=null;document.querySelectorAll('[data-install]').forEach(b=>b.hidden=true);});
 window.addEventListener('travel-sync-status',render);
 document.addEventListener('click',e=>{if(e.target.id==='safari-dismiss'){safariDismissed=true;try{sessionStorage.setItem('ra.safariDismissed','1');}catch{}bands();}});
 addEventListener('DOMContentLoaded',bands);

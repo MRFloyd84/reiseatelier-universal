@@ -19,7 +19,14 @@ const norm=s=>String(s||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,''
 // Heutige bzw. nächste Station
 function current(){const ds=sortedStops(),today=iso(new Date());const d=ds.find(x=>(x.end||x.start)>=today);if(!d)return null;return {d,today:d.start<=today};}
 function matches(m,d){if(!m.cities||!d)return false;const t=norm(d.city)+' '+norm(d.name);return m.cities.some(p=>t.includes(norm(p)));}
-function missionsOf(cc,d){const m=HC()?.MISSIONS?.[cc];return m?[...m.missions].sort((a,b)=>matches(b,d)-matches(a,d)):[];}
+/* Vertretungen: zuerst live vom Auswärtigen Amt (zwischengespeichert), sonst die hinterlegten. */
+function liveOf(cc){const L=(trip().settings?.home||'DE')==='DE'?globalThis.AAMissions?.forCountry(cc):null;if(!L||!L.length)return null;
+  return L.map(m=>({name:m.title+(m.city&&!m.title.includes(m.city)?' '+m.city:''),phone:m.phone,emergency:m.emergency,cities:m.city?[m.city]:[],note:m.area?'Zuständig: '+(m.area.length>160?m.area.slice(0,160)+' …':m.area):'',honorary:/honorar/i.test(m.title)}));}
+function missionsOf(cc,d){const live=liveOf(cc);const list=live||HC()?.MISSIONS?.[cc]?.missions||[];return [...list].sort((a,b)=>matches(b,d)-matches(a,d));}
+function aaStatusHtml(){const A=globalThis.AAMissions;if(!A||(trip().settings?.home||'DE')!=='DE')return '';const st=A.status();
+  const when=st.fetched?new Date(st.fetched).toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit',year:'numeric'}):'';
+  const err={offline:'gerade offline',blocked:'vom Browser blockiert',timeout:'keine Antwort'}[st.error]||(st.error?'Fehler: '+st.error:'');
+  return `<p class="small em-aa">${st.fetched?`Deutsche Vertretungen: live vom Auswärtigen Amt, abgerufen am ${h(when)} (${st.count} Einträge).`:'Deutsche Vertretungen: hinterlegte Angaben für 26 Länder.'}${err?` Live-Abruf ${h(err)}${st.fetched?' – es gilt der zuletzt abgerufene Stand.':'.'}`:''} <button type="button" class="text-btn small-btn" id="aa-refresh">↻ Aktualisieren</button></p>`;}
 
 /* Örtliche Nummern: gleiche Nummern zusammenfassen (z. B. „Notruf · Rettung · Feuerwehr 112“). */
 function numberRows(cc){const x=N?.get(cc);if(!x)return [];const rows=[];
@@ -29,8 +36,9 @@ function numbersHtml(cc,big=false){const x=N?.get(cc);if(!x)return '<p class="sm
   return `${rows.length?`<div class="em-nums-grid${big?' big':''}">${rows.map((r,i)=>`<a class="em-sosbtn${i?' alt':''}${big?' big':''}" href="${h(telHref(r.num))}"><span>${h(r.labels.join(' · '))}</span><b>☎ ${h(r.num)}</b></a>`).join('')}</div>`:''}
   ${x.note?`<p class="em-note">${h(x.note)}</p>`:''}${x.uncertain?'<p class="em-warn">⚠ Die Quellen sind für dieses Land uneinheitlich. Nummern vor Ort bestätigen lassen (Unterkunft, Reiseleitung, Botschaft).</p>':''}`;}
 function missionHtml(m,d){const hit=matches(m,d);return `<li class="em-mission${hit?' em-hit':''}"><strong>${h(m.name)}</strong>${hit?'<span class="em-badge">für diesen Ort</span>':''}<span class="em-nums">${m.phone?`<span>Zentrale ${tel(m.phone)}</span>`:''}${m.emergency?`<span>Notfall ${tel(m.emergency,'em-red')}</span>`:''}</span>${m.note?`<small>${h(m.note)}</small>`:''}</li>`;}
-function missionsBlock(cc,d){const hc=HC();if(!hc||cc===(trip().settings?.home||'DE'))return '';const ms=missionsOf(cc,d),note=HC().MISSIONS?.[cc]?.note;
-  if(ms.length)return `<h4>Deutsche Vertretungen</h4><ul class="em-missions">${ms.map(m=>missionHtml(m,d)).join('')}</ul>${note?`<p class="small">${h(note)}</p>`:''}<p class="small muted">Stand ${h(hc.CHECKED)} – vor der Reise auf auswaertiges-amt.de prüfen.</p>`;
+function missionsBlock(cc,d){const hc=HC();if(!hc||cc===(trip().settings?.home||'DE'))return '';const live=!!liveOf(cc),ms=missionsOf(cc,d),note=live?'':HC().MISSIONS?.[cc]?.note;
+  if(ms.length){const main=ms.filter((m,i)=>!m.honorary||matches(m,d)||i<3).slice(0,8),rest=ms.filter(m=>!main.includes(m));const st=globalThis.AAMissions?.status();
+    return `<h4>Deutsche Vertretungen</h4><ul class="em-missions">${main.map(m=>missionHtml(m,d)).join('')}</ul>${rest.length?`<details class="em-more"><summary>${rest.length} weitere (Honorarkonsuln)</summary><ul class="em-missions">${rest.map(m=>missionHtml(m,d)).join('')}</ul></details>`:''}${note?`<p class="small">${h(note)}</p>`:''}<p class="small muted">${live?`Quelle: Auswärtiges Amt (OpenData), abgerufen am ${h(new Date(st.fetched).toLocaleDateString('de-DE'))}.`:`Stand ${h(hc.CHECKED)} – vor der Reise auf auswaertiges-amt.de prüfen.`}</p>`;}
   return `<h4>Deutsche Vertretung</h4><p class="small">Für ${h(cn(cc))} ist keine Vertretung hinterlegt. Zuständige Botschaft und Notfallnummer stehen auf der Länderseite des Auswärtigen Amts (Abschnitt „Kontakt“ bzw. „Deutsche Vertretungen“). Tipp: als eigene Notfallnummer bei „Eure Angaben“ eintragen.</p><p class="button-row"><a class="btn-link small-btn" href="${h(hc.LINKS[0].url)}" target="_blank" rel="noopener">Länderseiten des Auswärtigen Amts ↗</a></p><p class="small muted">Gibt es im Land keine deutsche Vertretung, hilft jede Botschaft eines anderen EU-Staats.</p>`;}
 const stayLabels=()=>cruise()?{agent:'Hafenagent',berth:'Liegeplatz'}:{agent:'Unterkunft',berth:'Adresse'};
 function stayInfo(d){if(!d||!(d.agent||d.agentPhone||d.berth))return '';const L=stayLabels();return `<p class="em-port">${d.berth?`<span>${L.berth}: <b>${h(d.berth)}</b></span>`:''}${d.agent||d.agentPhone?`<span>${L.agent}: ${h(d.agent)} ${tel(d.agentPhone,'em-red')}</span>`:''}</p>`;}
@@ -144,7 +152,7 @@ function render(){const el=q('#notfall');if(!el||el.hidden)return;const box=q('#
   if(nowCC){const m=missionsOf(nowCC,cur.d)[0];now=`<section class="panel em-today"><div class="eyebrow">${cur.today?'HEUTE':'NÄCHSTE STATION · '+h(new Date(cur.d.start+'T12:00').toLocaleDateString('de-DE',{day:'2-digit',month:'long'}))}</div><h3>${flag(nowCC)} ${h(cur.d.city||cur.d.name)}, ${h(cn(nowCC))}</h3>${numbersHtml(nowCC,true)}${m&&nowCC!==homeCC?`<ul class="em-missions">${missionHtml(m,cur.d)}</ul>`:''}${stayInfo(cur.d)}<div class="button-row em-actions"><button type="button" class="primary" data-taxi="${h(cur.d.id)}">🚕 Taxi-Karte zeigen</button>${cruise()?'<button type="button" class="secondary" data-missed>⚓ Schiff verpasst?</button>':''}</div></section>`;}
   box.innerHTML=`${cruise()?'<p class="em-onboard"><strong>An Bord zuerst:</strong> Bei einem Notfall auf dem Schiff die Rezeption oder das Bordhospital anrufen (Kabinentelefon). An Land gilt der örtliche Notruf.</p>':''}
   ${now}
-  <div class="em-grid">${hc?`<section class="panel"><h3>Wichtige Nummern aus ${h(hc.name)}</h3><ul class="em-list">${hc.CENTRAL.map(n=>`<li><strong>${h(n.label)}</strong>${tel(n.phone,'em-red')}${n.alt?` <span class="small">oder</span> ${tel(n.alt)}`:''}${n.note?`<small>${h(n.note)}</small>`:''}</li>`).join('')}</ul><p class="button-row">${hc.LINKS.map(l=>`<a class="btn-link small-btn" href="${h(l.url)}" target="_blank" rel="noopener">${h(l.label)} ↗</a>`).join('')}</p></section>`:''}
+  <div class="em-grid">${hc?`<section class="panel"><h3>Wichtige Nummern aus ${h(hc.name)}</h3><ul class="em-list">${hc.CENTRAL.map(n=>`<li><strong>${h(n.label)}</strong>${tel(n.phone,'em-red')}${n.alt?` <span class="small">oder</span> ${tel(n.alt)}`:''}${n.note?`<small>${h(n.note)}</small>`:''}</li>`).join('')}</ul><p class="button-row">${hc.LINKS.map(l=>`<a class="btn-link small-btn" href="${h(l.url)}" target="_blank" rel="noopener">${h(l.label)} ↗</a>`).join('')}</p>${aaStatusHtml()}</section>`:''}
   <section class="panel"><div class="home-panel-head"><h3>Eure Angaben</h3>${editing?'':'<button type="button" class="secondary small-btn" id="em-edit">Bearbeiten</button>'}</div>${editing?ownForm():ownView()}</section></div>
   ${missedHtml(cur)}
   <div id="em-docs-slot">${docsHtml()}</div>
@@ -161,6 +169,9 @@ function render(){const el=q('#notfall');if(!el||el.hidden)return;const box=q('#
 function homeStrip(){if(!N)return '';const cur=current();const cc=cur?.d.country,main=cc?N.main(cc):'';
   const txt=main?`${cur.today?'Heute':'Nächste Station'}: ${flag(cc)} ${cn(cc)} · Notruf ${main}`:'Notrufe aller Länder, Botschaften und eure Kontakte – auch offline';
   return `<a class="home-sos" href="#notfall"><span class="hs-icon" aria-hidden="true">SOS</span><span><strong>Notfall</strong><small>${h(txt)}</small></span><span class="hc-go" aria-hidden="true">›</span></a>`;}
-window.TravelEmergency={show(){render();loadDocs();},onTrip(){if(!editing)render();},homeStrip};
+function liveRefresh(force){const A=globalThis.AAMissions;if(!A)return;A.refresh(force).then(()=>{if(!editing)render();});}
+addEventListener('aa-missions-updated',()=>{if(!editing)render();});
+document.addEventListener('click',e=>{if(e.target.closest?.('#aa-refresh')){notify('Vertretungen werden abgerufen …');liveRefresh(true);}});
+window.TravelEmergency={show(){render();loadDocs();liveRefresh(false);},onTrip(){if(!editing)render();},homeStrip};
 const wait=setInterval(()=>{let r=false;try{r=ready;}catch{}if(r){clearInterval(wait);if(location.hash==='#notfall'){render();loadDocs();}}},150);
 })();
