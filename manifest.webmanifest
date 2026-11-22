@@ -1,0 +1,16 @@
+{
+  "name": "Reiseatelier",
+  "short_name": "Reiseatelier",
+  "description": "Reisen planen: Route, Planung, Einreise, Notfall und Reisetagebuch – für jede Reise.",
+  "lang": "de",
+  "id": "./?app=reiseatelier-universal",
+  "start_url": "./index.html#start",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f7faf9",
+  "theme_color": "#123e50",
+  "icons": [
+    {"src": "icon-192.png", "sizes": "192x192", "type": "image/png"},
+    {"src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable"}
+  ]
+}
