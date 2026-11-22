@@ -78,15 +78,28 @@ Bis zu 6 Reisende können getrennt abhaken. Ist etwas fällig, erscheint ein Hin
 
 Alles funktioniert offline. Nummern ändern sich selten, aber kurz vor der Abreise lohnt ein Blick in die App „Sicher Reisen“ des Auswärtigen Amts.
 
-## 8. Sprache
+## 8. Packliste
 
-Deutsch oder Englisch, unter Einstellungen → „Sprache / Language“. Die Einstellung gilt pro Gerät; beim ersten Start richtet sie sich nach der Sprache des Browsers. Eigene Einträge (Notizen, Tagebuch, Ortsnamen) werden nicht übersetzt.
+Im Tab „Packliste“ erzeugt die App eine Liste aus Vorlagen, passend zur Art der Reise, zur Dauer (z. B. Anzahl Unterwäsche/T-Shirts) und zu den Zielen: Fernreise, Reiseadapter (Länder mit anderen Steckdosen), Strand, Tropen, Kälte, Wandern, Kreuzfahrt, Auto, Städtereise. Vorlagen lassen sich später ergänzen, ohne dass Einträge doppelt kommen. Eigene Einträge mit Kategorie, Anzahl und Person; Filter nach Person, „Gepacktes ausblenden“ und „Alle Haken entfernen“ für die Rückreise. Personen kommen aus „Einreise → Reisende eintragen“.
 
-## 9. Unterwegs ohne Internet
+## 9. Reisekasse
+
+Ausgaben in beliebiger Währung eintragen: Betrag, Kategorie, Datum, Station, wer bezahlt hat und auf wen es aufgeteilt wird. Die App rechnet in Euro um und speichert den Kurs mit der Ausgabe – spätere Kursänderungen verändern alte Ausgaben also nicht. Kurse kommen online von der freien Frankfurter-API (Referenzkurse von Zentralbanken) und gelten dann auch offline; jeder Kurs lässt sich von Hand ändern, z. B. auf den Kurs der Kreditkartenabrechnung. Übersicht: Summe, optionales Budget mit Rest und Tagesschnitt, Aufteilung nach Kategorien, wer wie viel bezahlt hat und wer wem was überweisen muss. Geplante Ausflugskosten aus der Reiseplanung werden zusätzlich angezeigt.
+
+Packliste und Reisekasse laufen über dieselbe Abgleich-Datei und werden Eintrag für Eintrag zusammengeführt: Haken oder Ausgaben, die zwei Personen gleichzeitig eintragen, gehen nicht verloren.
+
+## 10. Sprache und Darstellung
+
+Deutsch oder Englisch, unter Einstellungen → „Sprache / Language“. Darunter „Darstellung“: Automatisch (folgt dem hellen/dunklen Modus des Geräts), Hell oder Dunkel. Die Einstellung gilt pro Gerät; beim ersten Start richtet sie sich nach der Sprache des Browsers. Eigene Einträge (Notizen, Tagebuch, Ortsnamen) werden nicht übersetzt.
+
+## 11. Unterwegs ohne Internet
 
 Route, Planung, Einreise, Notfall, Tagebuch, Fotos, Ortssuche (eingebaute Liste mit rund 49.000 Orten) und eine Weltkarte mit Länderumrissen funktionieren offline. Online kommen die Detailkarte (OpenStreetMap), die genauere Ortssuche und Länder- und Klimadaten dazu.
 
-## 10. Aktualisieren
+## 12. Aktualisieren
+
+Wer `style.css` ändert, erzeugt das dunkle Farbschema neu mit `python3 tools/make-dark-css.py` (Handkorrekturen in `tools/dark-extra.css`).
+
 
 Neue Dateien über die alten hochladen. Die Reisedaten bleiben auf den Geräten. Beim nächsten Öffnen mit Internet lädt die App die neue Version.
 

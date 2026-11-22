@@ -121,7 +121,9 @@ let stampTail=Promise.resolve();
 function changeStamps(fn){const job=stampTail.then(async()=>{const st=await getStamps();fn(st,stamp());await retry(()=>syncDoc().set(st));});stampTail=job.catch(()=>{});return job;}
 /* Einreise-Haken werden einzeln abgeglichen (x:<aufgabe>|<person>), damit gleichzeitiges Abhaken beider Personen erhalten bleibt. */
 function splitSettings(settings){const s={...(settings||{})},checks=s.entry?.checks||{};if(s.entry)s.entry={...s.entry,checks:{}};return {s,checks};}
-function tripKeys(state){const m=new Map();for(const d of state.destinations||[])m.set('d:'+d.id,canonical(d));const {s,checks}=splitSettings(state.settings);m.set('s',canonical({settings:s,routeMode:state.routeMode}));for(const [k,v] of Object.entries(checks))m.set('x:'+k,v);return m;}
+/* k: Packliste, m: Reisekasse – je Eintrag abgeglichen wie die Stationen */
+const LISTS=[['k:','packing'],['m:','expenses']];
+function tripKeys(state){const m=new Map();for(const d of state.destinations||[])m.set('d:'+d.id,canonical(d));for(const [pre,f] of LISTS)for(const x of state[f]||[])m.set(pre+x.id,canonical(x));const {s,checks}=splitSettings(state.settings);m.set('s',canonical({settings:s,routeMode:state.routeMode}));for(const [k,v] of Object.entries(checks))m.set('x:'+k,v);return m;}
 function stampTrip(before,after){const a=tripKeys(before),b=tripKeys(after);return changeStamps((st,now)=>{for(const [k,v] of b)if(a.get(k)!==v){st.items[k]=now;delete st.tomb[k];}for(const k of a.keys())if(!b.has(k)){st.tomb[k]=now;delete st.items[k];}});}
 
 /* ---------- Sicherungen ---------- */
@@ -223,8 +225,16 @@ const Sync={
       else if(r){if(lt&&lt>=rs)stamps.tomb[k]=LS.tomb[k];else{checks[c]=r;stamps.items[k]=RS.items[k]||stamp();n.tripUpd++;}}
       else if(l){if(rt&&rt>=ls){stamps.tomb[k]=RS.tomb[k];n.tripUpd++;}else{checks[c]=l;stamps.items[k]=LS.items[k]||stamp();}}}
     for(const S of [LS,RS])for(const [k,v] of Object.entries(S.tomb))if(k.startsWith('x:')&&!stamps.items[k]&&(!stamps.tomb[k]||t(v)>t(stamps.tomb[k])))stamps.tomb[k]=v;
+    /* Packliste und Reisekasse: dieselbe Regel wie bei Stationen (neuere Änderung gewinnt, Löschungen werden übernommen) */
+    const lists={};for(const [pre,f] of LISTS){const Lx=new Map((L[f]||[]).map(x=>[x.id,x])),Rx=new Map((R[f]||[]).map(x=>[x.id,x])),res=[];
+      for(const id of new Set([...Lx.keys(),...Rx.keys()])){const k=pre+id,l=Lx.get(id),r=Rx.get(id),ls=keyT(LS,k),rs=keyT(RS,k),lt=tombT(LS,k),rt=tombT(RS,k);
+        if(l&&r){const take=rs>ls?r:l;if(take===r&&canonical(r)!==canonical(l))n.tripUpd++;res.push(take);stamps.items[k]=new Date(Math.max(ls,rs)||Date.now()).toISOString();}
+        else if(r){if(lt&&lt>=rs)stamps.tomb[k]=LS.tomb[k];else{res.push(r);n.tripUpd++;stamps.items[k]=RS.items[k]||stamp();}}
+        else if(l){if(rt&&rt>=ls){stamps.tomb[k]=RS.tomb[k];n.tripUpd++;}else{res.push(l);stamps.items[k]=LS.items[k]||stamp();}}}
+      for(const S of [LS,RS])for(const [k,v] of Object.entries(S.tomb))if(k.startsWith(pre)&&!stamps.items[k]&&(!stamps.tomb[k]||t(v)>t(stamps.tomb[k])))stamps.tomb[k]=v;
+      lists[f]=res;}
     const baseSettings=splitSettings(useR?R.settings:L.settings).s;
-    const merged=C().validateState({version:1,settings:{...baseSettings,entry:{...(baseSettings.entry||{}),checks}},routeMode:useR?R.routeMode:L.routeMode,destinations:out});
+    const merged=C().validateState({version:1,settings:{...baseSettings,entry:{...(baseSettings.entry||{}),checks}},routeMode:useR?R.routeMode:L.routeMode,destinations:out,packing:lists.packing,expenses:lists.expenses});
     if(useR&&canonical({s:splitSettings(R.settings).s,m:R.routeMode})!==canonical({s:splitSettings(L.settings).s,m:L.routeMode}))n.tripUpd++;
     const local=await Diary.list(),Ld=new Map(local.map(e=>[e.id,e])),Rd=new Map(file.diary.filter(e=>e&&typeof e.id==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(e.date)).map(e=>[e.id,e]));
     const diaryPut=[],diaryDel=[];

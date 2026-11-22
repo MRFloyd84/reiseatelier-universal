@@ -1,0 +1,13 @@
+html[data-theme=dark]{color-scheme:dark}
+html[data-theme=dark] body{background:var(--bg);color:var(--navy)}
+html[data-theme=dark] input,html[data-theme=dark] select,html[data-theme=dark] textarea{background:#1a2427;color:#e3ecee;border-color:#36474c}
+html[data-theme=dark] input::placeholder,html[data-theme=dark] textarea::placeholder{color:#7f9399}
+html[data-theme=dark] dialog{background:#152024;color:#e3ecee;border-color:#2c3b40}
+html[data-theme=dark] .compass-art{filter:invert(.92) hue-rotate(180deg)}
+html[data-theme=dark] .leaflet-tile-pane{filter:invert(1) hue-rotate(180deg) brightness(.9) contrast(.9)}
+html[data-theme=dark] .leaflet-container{background:#1b2a2e}
+html[data-theme=dark] .leaflet-popup-content-wrapper,html[data-theme=dark] .leaflet-popup-tip{background:#152024;color:#e3ecee}
+html[data-theme=dark] .leaflet-bar a{background:#152024;color:#e3ecee;border-color:#2c3b40}
+html[data-theme=dark] .leaflet-control-attribution{background:rgba(21,32,36,.8)!important;color:#9fb2b8}
+html[data-theme=dark] .leaflet-control-attribution a{color:#7fd0c8}
+html[data-theme=dark] img{filter:none}
