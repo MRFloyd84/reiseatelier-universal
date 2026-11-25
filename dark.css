@@ -179,6 +179,24 @@ html[data-theme=dark] .em-warn{background:#312a1a;border:1px solid #eac358;color
 html[data-theme=dark] .pk-who{background:#1e2928}
 html[data-theme=dark] .bk-bar.over i{background:#98201a}
 html[data-theme=dark] .bk-row:hover{background:#1c2523}
+html[data-theme=dark] .wk-stops li{background:#192323}
+html[data-theme=dark] .wk-num{color:#ffffff}
+html[data-theme=dark] .wk-results{background:#1c1c1c}
+html[data-theme=dark] .wk-results li:hover,html[data-theme=dark] .wk-results li:focus{background:#1e2928}
+html[data-theme=dark] .wk-tools button[aria-pressed=true]{color:#ffffff}
+html[data-theme=dark] .wk-sum div{background:#1e2928}
+html[data-theme=dark] .wk-warn{color:#e48f59}
+html[data-theme=dark] .wk-mapwrap{background:#333029}
+html[data-theme=dark] .wk-mapbar span{background:rgba(28,28,28,0.902)}
+html[data-theme=dark] .wk-pickhint{background:#153e50;color:#ffffff}
+html[data-theme=dark] .wk-pin{border:2px solid #1c1c1c;color:#ffffff}
+html[data-theme=dark] .wk-me-dot{background:#1c6ac7;border:3px solid #1c1c1c}
+html[data-theme=dark] .wk-me.weak .wk-me-dot{background:#6697cf}
+html[data-theme=dark] .wk-me-cone{border-bottom:26px solid rgba(28,106,199,0.333)}
+html[data-theme=dark] #wk-nav{background:#333029}
+html[data-theme=dark] .wkn-card{background:#153e50;color:#ffffff}
+html[data-theme=dark] .wkn-warn{background:#2f2619;color:#f3a675}
+html[data-theme=dark] .wkn-bar{background:#1c1c1c}
 /* Ergänzungen aus tools/dark-extra.css */
 html[data-theme=dark]{color-scheme:dark}
 html[data-theme=dark] body{background:var(--bg);color:var(--navy)}

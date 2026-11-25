@@ -30,6 +30,8 @@ function latestDiary(){return `<section class="panel home-diary"><div class="hom
 function cards(){const ds=trip().destinations,done=ds.filter(d=>d.status==='fertig').length,open=ds.filter(d=>d.status==='offen').length,pct=ds.length?Math.round(done/ds.length*100):0;
   const c=[['#route','⚑','Meine Route',ds.length?`${ds.length} Stationen in ${new Set(ds.map(d=>d.country)).size} Ländern auf der Karte`:'Stationen anlegen und auf der Karte verbinden'],
     ['#planung','▤','Meine Reiseplanung',ds.length?`${pct} % fertig geplant · ${open} Stationen noch offen`:'Ausflüge, Buchungen und Notizen je Station'],
+    ['#zufuss','🚶','Zu Fuß',window.TravelWalk?.homeLine()||'Spaziergänge planen und navigieren'],
+    ['#einreise','✈','Einreise','Visum, Einreiseformulare und Fristen für alle Reisenden'],
     ['#packliste','✓','Packliste',window.TravelPacking?.homeLine()||'Vorlage passend zu Reiseart und Zielen'],
     ['#reisekasse','€','Reisekasse',window.TravelBudget?.homeLine()||'Ausgaben, Budget und wer wem was schuldet'],
     ['#tagebuch','✎','Mein Reisetagebuch',diaryLoaded?`${diary.count} ${diary.count===1?'Eintrag':'Einträge'} · ${diary.photos} ${diary.photos===1?'Foto':'Fotos'}`:'Erlebnisse, Stimmung, Wetter und Fotos'],

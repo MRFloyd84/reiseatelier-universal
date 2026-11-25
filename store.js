@@ -122,7 +122,7 @@ function changeStamps(fn){const job=stampTail.then(async()=>{const st=await getS
 /* Einreise-Haken werden einzeln abgeglichen (x:<aufgabe>|<person>), damit gleichzeitiges Abhaken beider Personen erhalten bleibt. */
 function splitSettings(settings){const s={...(settings||{})},checks=s.entry?.checks||{};if(s.entry)s.entry={...s.entry,checks:{}};return {s,checks};}
 /* k: Packliste, m: Reisekasse – je Eintrag abgeglichen wie die Stationen */
-const LISTS=[['k:','packing'],['m:','expenses']];
+const LISTS=[['k:','packing'],['m:','expenses'],['w:','walks']];
 function tripKeys(state){const m=new Map();for(const d of state.destinations||[])m.set('d:'+d.id,canonical(d));for(const [pre,f] of LISTS)for(const x of state[f]||[])m.set(pre+x.id,canonical(x));const {s,checks}=splitSettings(state.settings);m.set('s',canonical({settings:s,routeMode:state.routeMode}));for(const [k,v] of Object.entries(checks))m.set('x:'+k,v);return m;}
 function stampTrip(before,after){const a=tripKeys(before),b=tripKeys(after);return changeStamps((st,now)=>{for(const [k,v] of b)if(a.get(k)!==v){st.items[k]=now;delete st.tomb[k];}for(const k of a.keys())if(!b.has(k)){st.tomb[k]=now;delete st.items[k];}});}
 
@@ -234,7 +234,7 @@ const Sync={
       for(const S of [LS,RS])for(const [k,v] of Object.entries(S.tomb))if(k.startsWith(pre)&&!stamps.items[k]&&(!stamps.tomb[k]||t(v)>t(stamps.tomb[k])))stamps.tomb[k]=v;
       lists[f]=res;}
     const baseSettings=splitSettings(useR?R.settings:L.settings).s;
-    const merged=C().validateState({version:1,settings:{...baseSettings,entry:{...(baseSettings.entry||{}),checks}},routeMode:useR?R.routeMode:L.routeMode,destinations:out,packing:lists.packing,expenses:lists.expenses});
+    const merged=C().validateState({version:1,settings:{...baseSettings,entry:{...(baseSettings.entry||{}),checks}},routeMode:useR?R.routeMode:L.routeMode,destinations:out,packing:lists.packing,expenses:lists.expenses,walks:lists.walks});
     if(useR&&canonical({s:splitSettings(R.settings).s,m:R.routeMode})!==canonical({s:splitSettings(L.settings).s,m:L.routeMode}))n.tripUpd++;
     const local=await Diary.list(),Ld=new Map(local.map(e=>[e.id,e])),Rd=new Map(file.diary.filter(e=>e&&typeof e.id==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(e.date)).map(e=>[e.id,e]));
     const diaryPut=[],diaryDel=[];

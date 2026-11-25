@@ -1,0 +1,57 @@
+# Veröffentlicht die App auf GitHub Pages – zusammen mit den Offline-Kartenpaketen (maps/packs.json).
+# Einmalig nötig: Repository → Settings → Pages → „Build and deployment“ → Source: „GitHub Actions“.
+# Läuft bei jedem Push auf main, von Hand (Actions → „Seite und Kartenpakete“ → Run workflow)
+# und am 2. jedes Monats, damit die Karten aktuell bleiben.
+name: Seite und Kartenpakete
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+  schedule:
+    - cron: '23 3 2 * *'
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: false
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Monat für den Karten-Cache
+        id: month
+        run: echo "m=$(date +%Y-%m)" >> "$GITHUB_OUTPUT"
+      - name: Kartenpakete aus dem Cache holen
+        uses: actions/cache@v4
+        with:
+          path: .mapcache
+          key: maps-${{ steps.month.outputs.m }}-${{ hashFiles('maps/packs.json') }}
+          restore-keys: maps-${{ steps.month.outputs.m }}-
+      - name: pmtiles-Programm laden
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release download -R protomaps/go-pmtiles --pattern '*_Linux_x86_64.tar.gz' -D /tmp/pmt
+          tar -xzf /tmp/pmt/*.tar.gz -C /tmp/pmt
+          /tmp/pmt/pmtiles version || true
+      - name: Seite zusammenstellen
+        run: |
+          mkdir _site
+          tar --exclude=./.git --exclude=./.github --exclude=./_site --exclude=./.mapcache -cf - . | tar -xf - -C _site
+      - name: Kartenpakete bauen
+        run: python3 tools/build_map_packs.py /tmp/pmt/pmtiles .mapcache _site/maps
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

@@ -1,0 +1,21 @@
+{
+  "_hinweis": "Liste der Kartenpakete für die Offline-Karten. bbox = [West, Süd, Ost, Nord] in Grad. Nach einer Änderung baut die GitHub Action „Seite und Kartenpakete“ die Pakete neu. Rahmen findest du z. B. mit bboxfinder.com. Jedes Paket etwa 5–40 MB; GitHub Pages erlaubt insgesamt 1 GB.",
+  "maxzoom": 15,
+  "packs": [
+    {"id": "berlin",     "name": "Berlin (Innenstadt)",      "name_en": "Berlin (centre)",      "country": "DE", "bbox": [13.28, 52.47, 13.48, 52.56]},
+    {"id": "hamburg",    "name": "Hamburg (Innenstadt)",     "name_en": "Hamburg (centre)",     "country": "DE", "bbox": [9.90, 53.52, 10.07, 53.60]},
+    {"id": "muenchen",   "name": "München (Innenstadt)",     "name_en": "Munich (centre)",      "country": "DE", "bbox": [11.50, 48.10, 11.65, 48.18]},
+    {"id": "koeln",      "name": "Köln (Innenstadt)",        "name_en": "Cologne (centre)",     "country": "DE", "bbox": [6.88, 50.90, 7.03, 50.97]},
+    {"id": "wien",       "name": "Wien (Innenstadt)",        "name_en": "Vienna (centre)",      "country": "AT", "bbox": [16.30, 48.17, 16.43, 48.24]},
+    {"id": "zuerich",    "name": "Zürich",                   "name_en": "Zurich",               "country": "CH", "bbox": [8.48, 47.35, 8.58, 47.41]},
+    {"id": "amsterdam",  "name": "Amsterdam",                "name_en": "Amsterdam",            "country": "NL", "bbox": [4.83, 52.33, 4.96, 52.40]},
+    {"id": "paris",      "name": "Paris",                    "name_en": "Paris",                "country": "FR", "bbox": [2.25, 48.81, 2.42, 48.90]},
+    {"id": "london",     "name": "London (Zentrum)",         "name_en": "London (central)",     "country": "GB", "bbox": [-0.22, 51.47, -0.03, 51.55]},
+    {"id": "rom",        "name": "Rom",                      "name_en": "Rome",                 "country": "IT", "bbox": [12.42, 41.86, 12.54, 41.93]},
+    {"id": "barcelona",  "name": "Barcelona",                "name_en": "Barcelona",            "country": "ES", "bbox": [2.10, 41.35, 2.23, 41.43]},
+    {"id": "lissabon",   "name": "Lissabon",                 "name_en": "Lisbon",               "country": "PT", "bbox": [-9.23, 38.69, -9.09, 38.77]},
+    {"id": "prag",       "name": "Prag",                     "name_en": "Prague",               "country": "CZ", "bbox": [14.36, 50.05, 14.48, 50.11]},
+    {"id": "kopenhagen", "name": "Kopenhagen",               "name_en": "Copenhagen",           "country": "DK", "bbox": [12.50, 55.65, 12.63, 55.71]},
+    {"id": "new-york",   "name": "New York (Manhattan)",     "name_en": "New York (Manhattan)", "country": "US", "bbox": [-74.03, 40.69, -73.92, 40.82]}
+  ]
+}

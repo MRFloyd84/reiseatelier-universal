@@ -1,0 +1,15 @@
+Kartenbausteine für das Fußgänger-Navi und die Offline-Karten
+
+- maplibre-gl.js / maplibre-gl.css – MapLibre GL JS 5.24.1, BSD-3-Clause (siehe LICENSE-maplibre.txt)
+  https://github.com/maplibre/maplibre-gl-js
+- pmtiles.js – PMTiles 4.5.0, BSD-3-Clause, © Protomaps LLC
+  https://github.com/protomaps/PMTiles
+- basemaps.js – @protomaps/basemaps 5.7.2 (Kartenstil), BSD-3-Clause, © Protomaps LLC
+  https://github.com/protomaps/basemaps
+- fonts/ – Noto Sans (Regular, Medium, Italic) als Glyphen, SIL Open Font License 1.1 (fonts/OFL.txt)
+  aus https://github.com/protomaps/basemaps-assets
+- sprites/v4/ – Kartensymbole aus https://github.com/protomaps/basemaps-assets,
+  abgeleitet von den MIT-lizenzierten tangrams/icons (https://github.com/tangrams/icons)
+
+Kartendaten der Kartenpakete: © OpenStreetMap-Mitwirkende, ODbL (https://www.openstreetmap.org/copyright),
+aufbereitet von Protomaps (https://protomaps.com).

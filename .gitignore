@@ -1,0 +1,4 @@
+maps/*.pmtiles
+maps/catalog.json
+.mapcache/
+_site/

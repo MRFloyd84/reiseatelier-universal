@@ -6,7 +6,7 @@ Reiseplanung für jede Art von Reise: Route mit Karte, Reiseplanung, Einreise-Ch
 
 HTTPS ist Pflicht, sonst funktionieren App-Installation und Offline-Modus nicht.
 
-**GitHub Pages:** Neues öffentliches Repository anlegen (z. B. `reiseatelier-universal`), den **Inhalt** dieses Ordners hochladen (`index.html` muss oben liegen), dann Settings → Pages → „Deploy from a branch“ → `main`, `/ (root)`. Nach 1–2 Minuten ist die App unter `https://DEINNAME.github.io/reiseatelier-universal/` erreichbar.
+**GitHub Pages:** Neues öffentliches Repository anlegen (z. B. `reiseatelier-universal`), den **Inhalt** dieses Ordners hochladen (`index.html` muss oben liegen), dann Settings → Pages → „Build and deployment“ → Source: **„GitHub Actions“**. Die mitgelieferte Action „Seite und Kartenpakete“ (`.github/workflows/pages.yml`) veröffentlicht bei jedem Push die App und baut dabei die Offline-Kartenpakete (Abschnitt 8). Nach wenigen Minuten ist die App unter `https://DEINNAME.github.io/reiseatelier-universal/` erreichbar. Ohne Offline-Karten geht auch „Deploy from a branch“ → `main`, `/ (root)`.
 
 **Netlify:** „Add new site → Deploy manually“ und den Ordner ins Fenster ziehen.
 
@@ -78,25 +78,43 @@ Bis zu 6 Reisende können getrennt abhaken. Ist etwas fällig, erscheint ein Hin
 
 Alles funktioniert offline. Nummern ändern sich selten, aber kurz vor der Abreise lohnt ein Blick in die App „Sicher Reisen“ des Auswärtigen Amts.
 
-## 8. Packliste
+## 8. Zu Fuß: Spaziergänge und Navi
+
+Im Tab **Zu Fuß** plant man Spaziergänge mit bis zu 25 Punkten und lässt sich hinführen.
+
+- **Punkte hinzufügen:** suchen (Orte, Adressen, Sehenswürdigkeiten), „📍 Meine Position“, „＋ Auf Karte antippen“ oder „★ Sehenswürdigkeiten übernehmen“ – das liest die Sehenswürdigkeiten und Ausflüge der gewählten Station aus der Reiseplanung und sucht sie in deren Nähe (bitte prüfen). „⇅ Reihenfolge optimieren“ sortiert nach kürzestem Weg, der erste Punkt bleibt Start. „Rundweg“ führt zurück zum Start.
+- **Weg:** wird automatisch berechnet (Strecke, Gehzeit, Abschnitte, Wegbeschreibung) und auf diesem Gerät gespeichert – er bleibt ohne Netz verfügbar. „GPX“ exportiert ihn für andere Apps.
+- **Navigation starten:** Vollbild mit Live-Position, nächstem Abbiegehinweis und Entfernung, Restweg mit Ankunftszeit, Sprachansagen (abschaltbar), Vibration (Android). Wer vom Weg abkommt, bekommt online automatisch einen neuen Weg. Die Karte dreht sich auf Wunsch in Blickrichtung (🧭). Der Bildschirm bleibt während der Navigation an. Ist „Navigation startet an meiner Position“ an, führt die App zuerst von dort zum ersten Punkt.
+- **Zu Fuß dorthin:** In „Meine Route“ hat jede Station diesen Knopf – mit Reiseatelier navigieren oder in Google Maps, Apple Karten bzw. einer anderen Navi-App öffnen.
+- **Grenzen:** Das iPhone verfolgt die Position einer Web-App nicht weiter, wenn der Bildschirm gesperrt ist – während der Navigation das Display anlassen. Keine Echtzeitdaten für Bus und Bahn; dafür Google Maps oder Apple Karten öffnen.
+- **Routing-Dienst:** Standard ist der ehrenamtlich betriebene FOSSGIS-Routingserver (OSRM, ohne Anmeldung, höchstens eine Anfrage pro Sekunde, keine Verfügbarkeitsgarantie). Alternativ openrouteservice mit eigenem kostenlosem Schlüssel (2.000 Wege pro Tag), unter „Einstellungen fürs Navi“. Der Schlüssel bleibt auf dem Gerät. Die Ortssuche nutzt Photon (komoot). Punkte und Suchbegriffe gehen dabei an den jeweiligen Dienst.
+- **Abgleich:** Spaziergänge (Name, Station, Punkte) werden mit der Reise abgeglichen. Berechnete Wege und Kartenpakete bleiben auf dem jeweiligen Gerät.
+
+### Offline-Karten
+
+Ein Kartenpaket enthält eine Stadt mit allen Straßen, Wegen und Namen (Vektorkarte aus OpenStreetMap, aufbereitet von Protomaps). Unten im Tab „Zu Fuß“ → „🗺 Offline-Karten“ → „⬇ Laden“, am besten im WLAN. Pakete, die zur Reise passen, sind markiert. Danach zeigt der Tab die Karte ohne Internet; zusammen mit vorher berechneten Wegen funktioniert auch die Navigation. Neue Wege lassen sich offline nicht berechnen – also vor der Reise oder im Hotel-WLAN planen.
+
+**Welche Städte es gibt** steht in `maps/packs.json` (Name, Land, Rahmen `[West, Süd, Ost, Nord]`). Eine Stadt ergänzen: Eintrag hinzufügen (Rahmen z. B. mit bboxfinder.com bestimmen), committen – die Action baut die Pakete neu und schreibt `maps/catalog.json`. Sie holt dazu den aktuellen Planet-Build von build.protomaps.com und schneidet die Städte mit dem `pmtiles`-Programm aus; am 2. jedes Monats aktualisiert sie die Karten. Jedes Paket hat etwa 5–40 MB, GitHub Pages erlaubt zusammen 1 GB. Eigene Pakete (z. B. mit `pmtiles extract` erstellt) lassen sich über „Kartenpaket aus Datei laden“ übernehmen. Die normalen Kacheln von openstreetmap.org werden nicht vorab geladen – das verbieten deren Nutzungsbedingungen.
+
+## 9. Packliste
 
 Im Tab „Packliste“ erzeugt die App eine Liste aus Vorlagen, passend zur Art der Reise, zur Dauer (z. B. Anzahl Unterwäsche/T-Shirts) und zu den Zielen: Fernreise, Reiseadapter (Länder mit anderen Steckdosen), Strand, Tropen, Kälte, Wandern, Kreuzfahrt, Auto, Städtereise. Vorlagen lassen sich später ergänzen, ohne dass Einträge doppelt kommen. Eigene Einträge mit Kategorie, Anzahl und Person; Filter nach Person, „Gepacktes ausblenden“ und „Alle Haken entfernen“ für die Rückreise. Personen kommen aus „Einreise → Reisende eintragen“.
 
-## 9. Reisekasse
+## 10. Reisekasse
 
 Ausgaben in beliebiger Währung eintragen: Betrag, Kategorie, Datum, Station, wer bezahlt hat und auf wen es aufgeteilt wird. Die App rechnet in Euro um und speichert den Kurs mit der Ausgabe – spätere Kursänderungen verändern alte Ausgaben also nicht. Kurse kommen online von der freien Frankfurter-API (Referenzkurse von Zentralbanken) und gelten dann auch offline; jeder Kurs lässt sich von Hand ändern, z. B. auf den Kurs der Kreditkartenabrechnung. Übersicht: Summe, optionales Budget mit Rest und Tagesschnitt, Aufteilung nach Kategorien, wer wie viel bezahlt hat und wer wem was überweisen muss. Geplante Ausflugskosten aus der Reiseplanung werden zusätzlich angezeigt.
 
 Packliste und Reisekasse laufen über dieselbe Abgleich-Datei und werden Eintrag für Eintrag zusammengeführt: Haken oder Ausgaben, die zwei Personen gleichzeitig eintragen, gehen nicht verloren.
 
-## 10. Sprache und Darstellung
+## 11. Sprache und Darstellung
 
 Deutsch oder Englisch, unter Einstellungen → „Sprache / Language“. Darunter „Darstellung“: Automatisch (folgt dem hellen/dunklen Modus des Geräts), Hell oder Dunkel. Die Einstellung gilt pro Gerät; beim ersten Start richtet sie sich nach der Sprache des Browsers. Eigene Einträge (Notizen, Tagebuch, Ortsnamen) werden nicht übersetzt.
 
-## 11. Unterwegs ohne Internet
+## 12. Unterwegs ohne Internet
 
-Route, Planung, Einreise, Notfall, Tagebuch, Fotos, Ortssuche (eingebaute Liste mit rund 49.000 Orten) und eine Weltkarte mit Länderumrissen funktionieren offline. Online kommen die Detailkarte (OpenStreetMap), die genauere Ortssuche und Länder- und Klimadaten dazu.
+Route, Planung, Einreise, Notfall, Tagebuch, Fotos, Ortssuche (eingebaute Liste mit rund 49.000 Orten) und eine Weltkarte mit Länderumrissen funktionieren offline. Online kommen die Detailkarte (OpenStreetMap), die genauere Ortssuche und Länder- und Klimadaten dazu. Mit Offline-Kartenpaket funktionieren im Tab „Zu Fuß“ auch Stadtkarte und gespeicherte Wege ohne Netz.
 
-## 12. Aktualisieren
+## 13. Aktualisieren
 
 Wer `style.css` ändert, erzeugt das dunkle Farbschema neu mit `python3 tools/make-dark-css.py` (Handkorrekturen in `tools/dark-extra.css`).
 
@@ -105,4 +123,4 @@ Neue Dateien über die alten hochladen. Die Reisedaten bleiben auf den Geräten.
 
 ## Quellen
 
-Kartendaten © OpenStreetMap-Mitwirkende, Natural Earth. Kartenbibliothek Leaflet 1.9.4 (BSD-2-Clause). Ortsliste GeoNames (CC BY 4.0). Notrufnummern: u. a. Wikipedia „List of emergency telephone numbers“. Vertretungen und Reisehinweise: Auswärtiges Amt.
+Kartendaten © OpenStreetMap-Mitwirkende (ODbL), Natural Earth; Kartenpakete aufbereitet von Protomaps. Kartenbibliotheken Leaflet 1.9.4 (BSD-2-Clause), MapLibre GL JS 5 und PMTiles (BSD-3-Clause), Kartenstil @protomaps/basemaps (BSD-3-Clause), Schrift Noto Sans (SIL OFL) – Details in `vendor/LICENSE-kartenbausteine.txt`. Fußwege: FOSSGIS-Routingserver (OSRM) bzw. openrouteservice (HeiGIT). Ortssuche: Photon (komoot). Ortsliste GeoNames (CC BY 4.0). Notrufnummern: u. a. Wikipedia „List of emergency telephone numbers“. Vertretungen und Reisehinweise: Auswärtiges Amt.
