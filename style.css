@@ -502,3 +502,17 @@ html.wk-navigating,html.wk-navigating body{overflow:hidden}
 .wk-map .maplibregl-ctrl button{padding:0;border-radius:0;font-size:inherit;font-weight:400;transition:none;background-repeat:no-repeat;background-position:center;box-shadow:none}.wk-map .maplibregl-ctrl-attrib-button{border-radius:12px}.wk-map .maplibregl-ctrl-group button:first-child{border-radius:4px 4px 0 0}.wk-map .maplibregl-ctrl-group button:last-child{border-radius:0 0 4px 4px}
 @media(min-width:901px){.wk-mapwrap{position:sticky;top:16px}}
 #wk-nav .maplibregl-ctrl-top-right{top:calc(120px + env(safe-area-inset-top))}
+/* Sehenswürdigkeiten in der Nähe */
+.wk-sights{margin-top:18px}.wk-sg-head{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;align-items:flex-end}.wk-sg-head h3{margin:0}.wk-sg-head p{margin:4px 0 0}
+.wk-sg-ctrl{display:flex;flex-wrap:wrap;gap:8px;align-items:flex-end}.wk-sg-ctrl label{margin:0}.wk-sg-ctrl select{min-width:90px}.wk-sg-dest select{min-width:160px}
+.wk-sg-chips{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0 10px}
+.wk-chip{border:1px solid var(--line);background:#fff;color:var(--navy);border-radius:20px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer}.wk-chip span{color:var(--muted);font-weight:500;margin-left:2px}.wk-chip[aria-pressed=true]{background:var(--teal);border-color:var(--teal);color:#fff}.wk-chip[aria-pressed=true] span{color:#e6f4f3}
+.wk-sg-tools{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-bottom:12px}.wk-sg-tools label{margin:0}
+.wk-sg-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px;margin-bottom:12px}
+.wk-sg-card{display:grid;grid-template-rows:auto 1fr auto;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#fff}.wk-sg-card.in{border-color:var(--teal);box-shadow:0 0 0 1px var(--teal)}
+.wk-sg-img{position:relative;height:120px;background:linear-gradient(135deg,#e3efee,#d7e4ea);display:grid;place-items:center}.wk-sg-img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}.wk-sg-img span{font-size:34px;opacity:.55}
+.wk-sg-txt{display:grid;gap:3px;padding:10px 12px;align-content:start}.wk-sg-txt strong{font-size:14px;color:var(--navy)}
+.wk-sg-btns{display:flex;gap:6px;padding:0 12px 12px;flex-wrap:wrap}.wk-sg-btns button,.wk-sg-btns a{padding:7px 10px;font-size:12px}.wk-sg-btns button:first-child{flex:1}
+.wk-sg-src{margin-top:10px}
+.wk-sg-pin{width:30px;height:30px;border-radius:50%;border:2px solid #fff;background:#fff3d6;box-shadow:0 2px 6px #0004;font-size:15px;line-height:1;padding:0;display:grid;place-items:center;cursor:pointer}
+.wk-sg-pop{display:grid;gap:6px;font-family:inherit}.wk-sg-pop button{padding:7px 10px;font-size:12px}

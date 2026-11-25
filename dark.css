@@ -197,6 +197,12 @@ html[data-theme=dark] #wk-nav{background:#333029}
 html[data-theme=dark] .wkn-card{background:#153e50;color:#ffffff}
 html[data-theme=dark] .wkn-warn{background:#2f2619;color:#f3a675}
 html[data-theme=dark] .wkn-bar{background:#1c1c1c}
+html[data-theme=dark] .wk-chip{background:#1c1c1c}
+html[data-theme=dark] .wk-chip[aria-pressed=true]{color:#ffffff}
+html[data-theme=dark] .wk-chip[aria-pressed=true] span{color:#e6f4f3}
+html[data-theme=dark] .wk-sg-card{background:#1c1c1c}
+html[data-theme=dark] .wk-sg-img{background:linear-gradient(135deg,#242f2e,#273136)}
+html[data-theme=dark] .wk-sg-pin{border:2px solid #1c1c1c;background:#342d1c}
 /* Ergänzungen aus tools/dark-extra.css */
 html[data-theme=dark]{color-scheme:dark}
 html[data-theme=dark] body{background:var(--bg);color:var(--navy)}
